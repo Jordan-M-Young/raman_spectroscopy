@@ -19,17 +19,35 @@ wavenumber = [9.04E+02	9.08E+02	9.12E+02	9.17E+02	9.21E+02	9.25E+02	9.30E+02	9.3
 numbands = 2
 
 
-% array of zeros that will eventually hold your spectral data
+% array of zeros that will eventually hold your spectral parameters
+% array has dimensions numbands*5 x row, each band has 5 attributes 
+% and row is the number of pixel/spectra pairs in your hyperspectral image
 carbon_spectra_params = zeros(numbands*5,row);
+
+%array of zeros that will eventually hold your spectral data
 carbon_spectra = zeros(col,row);
-raw_carbon_spectra = zeros(col,row);
+
+%Calculates the coefficient of determination (R^2) value
+% between pairs of fit/raw spectra between data and raw_data
+%CoD_R2 is an array of R^2 values and suc is an integer value
+% of succesful computations of meaningful R^2 values
+[CoD_R2,suc] = CoD_computer(data,raw_data);
+
+% an array of zeros that will hold the new index numbers
+% of relevant spectra
+counting = zeros(1,row);
+
+%an array of zeros that will hold the maximum values of
+%each relevant spectra for normalization purposes
+Normalize_vals = zeros(1,row);
+
+%sets a counter for reindexing relevant pixels/spectra into carbon_spectra_params
+% and carbon_spectra arrays
 counter = 1;
 
-[CoD_R2,ssss] = CoD_computer(data,raw_data);
-ssss;
-counting = zeros(1,row);
-Normalize_vals = zeros(1,row);
+%This block does several things:
 for i = 1:row
+    % discriminates against fit spectra based on their R^2 value. Set it to what you want!
     if CoD_R2(i) > 0.95
         intensity = data((1*i):row:((row*col) - row +(1*i)));
         intensity = double(intensity);
