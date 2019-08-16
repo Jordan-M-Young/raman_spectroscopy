@@ -141,8 +141,9 @@ for i = 1:row
         g_slope(i) = D_slope;
         d_slope(i) = G_slope;
         kk(i) = KK;
-
-        counter = counter + 1 % counter for array placement
+        
+        % counter for array placement
+        counter = counter + 1 t
     else
     end
 end
