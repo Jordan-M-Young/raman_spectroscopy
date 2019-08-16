@@ -49,46 +49,91 @@ counter = 1;
 for i = 1:row
     % discriminates against fit spectra based on their R^2 value. Set it to what you want!
     if CoD_R2(i) > 0.95
+        
+        % pulls spectrum intensity values for sample 'i' 
         intensity = data((1*i):row:((row*col) - row +(1*i)));
         intensity = double(intensity);
+        
+        % signal is a 2 x num spectral channels array with wavenumbers as row 1 and intensities as row 2
+        % this is our spectrum
         signal = [wavenumber;intensity];
+        
+        %fits spectrum; FitResults are the spectral parameters you want
+        % see https://terpconnect.umd.edu/~toh/spectrum/InteractivePeakFitter.htm for more information
+        % Info about the author of this function:
+        % This code is part of "A Pragmatic Introduction to Signal Processing", created and maintained by 
+        %Prof. Tom O'Haver , Department of Chemistry and Biochemistry, The University of Maryland at College Park. 
+        %Comments, suggestions and questions should be directed to Prof. O'Haver at toh@umd.edu. 
         [FitResults,FitError] = peakfit(signal,1400,1100,2,2,1);
-        if FitResults(7) >= 1620 | FitResults(7) <= 1550 | FitResults(2) <= 1300 | FitResults(2) >= 1400
+        
+        % screens spectral with peak positions (cm-1) that are outside realistic bounds that you determine
+        % add more if you have more than 2 bands
+        
+        %    band1 lower bound       band1 upper bound       band2 lower bound       band2 upper bound
+        if  FitResults(2) <= 1300 | FitResults(2) >= 1400 | FitResults(7) <= 1550 | FitResults(7) >= 1620 
         else   
             FitResults = transpose([FitResults(1:2:9),FitResults(2:2:10)]);
+            
+            % adds the extracted spectral parameters for sample 'i' to carbon_spectra_params
             carbon_spectra_params(1 + ((counter -1)*10):10+((counter -1)*10)) = FitResults;
+            
+            % adds the fit spectral intensities for sample 'i' to carbon_spectra
             carbon_spectra(1 + ((counter -1)*col):col+((counter -1)*col)) = transpose(y);
+            
+            % adds index to new set of indices
             counting(counter) = i ;
+            
+            % adds maximum intensity of sample 'i' to Normalize_vals
             Normalize_vals(counter) = max(intensity);
+            
             counter = counter + 1
             
         end
     else       
     end
 end
+
 %block calculates
-count = 1;
+counter = 1;
+
+% These parameters are optional, however Young et al. (in review) show that these 
+% in certain situations these parameters are useful material structure indicators
+% If none of the following parameters interest you then feel free to comment 
+% this section ,lines (103 -159), out. 
+
+%curvature of the D-carbon band (replace with the name of a band you care about)
 KD = zeros(1,row);
+
+% curvature of the G-carbon band (replace with the name of a band you care about)
 KG = zeros(1,row);
+
+% Ratio of the intensities of the D-carbon band and G-carbon band (remove or replace as you will)
 ID_IG  =zeros(1,row);
+
+% maximum slope of the d-band (replace with band you care about)
 d_slope = zeros(1,row);
+
+% maximum slope of the g-band (replace with band you care about)
 g_slope = zeros(1,row);
-c_t = carbon_spectra;
+
+%total curvature of the spectrum :  https://en.wikipedia.org/wiki/Curvature
 kk = zeros(1,row);
 for i = 1:row
     if carbon_spectra_params(1+((i-1)*(numbands*5))) ~= 0
-        fwhmd = carbon_spectra_params(4 +((i-1)*(numbands*5))); %FWHM of d band
+        
+        %spectral parameters we care about
+        fwhmd = carbon_spectra_params(4 +((i-1)*(numbands*5))); %FWHM of d band                  
         wd = carbon_spectra_params(2 +((i-1)*(numbands*5))); %peak position of the d band
         ID = carbon_spectra_params(3 +((i-1)*(numbands*5))); % intensity of d band
         fwhmg = carbon_spectra_params(9 +((i-1)*(numbands*5))); % FWHM of G band
         wg = carbon_spectra_params(7 +((i-1)*(numbands*5))); % peak position
         IG = carbon_spectra_params(8 +((i-1)*(numbands*5))); %intensity of gband
-        p = c_t(1 + ((i -1)*col):col+((i -1)*col)); 
-        [K, D_slope, G_slope,KK] = CurvatureCompute(wd,Normalize_vals(i),fwhmd,wd,fwhmg,wg,ID,IG,p);
+        intensity = carbon_spectra(1 + ((i -1)*col):col+((i -1)*col)); 
+        [K, D_slope, G_slope,KK] = CurvatureCompute(wd,Normalize_vals(i),fwhmd,wd,fwhmg,wg,ID,IG,intensity);
                                 
         KD(i) = K;
         
-        [K, D_slope, G_slope, KK] = CurvatureCompute(wg,Normalize_vals(i),fwhmd,wd,fwhmg,wg,ID,IG,p);
+        [K, D_slope, G_slope, KK] = CurvatureCompute(wg,Normalize_vals(i),fwhmd,wd,fwhmg,wg,ID,IG,intensity);
         
         KG(i) = K;
 
@@ -97,7 +142,7 @@ for i = 1:row
         d_slope(i) = G_slope;
         kk(i) = KK;
 
-        count = count + 1 % counter for array placement
+        counter = counter + 1 % counter for array placement
     else
     end
 end
@@ -112,5 +157,8 @@ carbon_spectra_params = [carbon_spectra_params;g_slope];
 
 carbon_spectra_params = fnorm_reconstructor(carbon_spectra_params)
 
+%writes spectral parameters to a .csv file of name you choose.
 csvwrite('ALH770121_95_SG_params.csv',carbon_spectra_params)
+
+%writes spectral intensities to a .csv file of name you choose.
 csvwrite('ALH770121_95_SG_spectra.csv',carbon_spectra)
