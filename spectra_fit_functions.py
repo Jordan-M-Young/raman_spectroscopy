@@ -34,12 +34,19 @@ def num_name_gen(num_peaks):
     
     return names,nums
 
-def Param_Read(name,num_peaks=2):
+def Param_Read(file_name,num_peaks=2):
     """opens .csv file of spectral parameters and unpacks data"""
+    
+    if '.csv' in name:
+        continue
+    else:
+        file_name = file_name + '.csv' 
+        
     count = 0
     dictionary = {}
-    p_dic = {}
-    with open(name, newline='') as csvfile:
+    params = {}
+    
+    with open(file_name, newline='') as csvfile:
         reader = csv.reader(csvfile,delimiter=',')
         for row in reader:
             dictionary[str(count)] = row
