@@ -50,6 +50,6 @@ for i = 1:size(CoD_R2)
     end
 end
 
-    
+%outputs are the R^2 values and the # of successes    
 CoD_R2
 suc = sum(suc)
