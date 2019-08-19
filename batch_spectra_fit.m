@@ -93,70 +93,9 @@ for i = 1:row
     end
 end
 
-%block calculates
-counter = 1;
+%adds old indices to new matrix
+carbon_spectra_params = [carbon_spectra_params;counting];
 
-% These parameters are optional, however Young et al. (in review) show that these 
-% in certain situations these parameters are useful material structure indicators
-% If none of the following parameters interest you then feel free to comment 
-% this section ,lines (103 -159), out. 
-
-%curvature of the D-carbon band (replace with the name of a band you care about)
-KD = zeros(1,row);
-
-% curvature of the G-carbon band (replace with the name of a band you care about)
-KG = zeros(1,row);
-
-% Ratio of the intensities of the D-carbon band and G-carbon band (remove or replace as you will)
-ID_IG  =zeros(1,row);
-
-% maximum slope of the d-band (replace with band you care about)
-d_slope = zeros(1,row);
-
-% maximum slope of the g-band (replace with band you care about)
-g_slope = zeros(1,row);
-
-%total curvature of the spectrum :  https://en.wikipedia.org/wiki/Curvature
-kk = zeros(1,row);
-for i = 1:row
-    if carbon_spectra_params(1+((i-1)*(numbands*5))) ~= 0
-        
-        %spectral parameters we care about
-        fwhmd = carbon_spectra_params(4 +((i-1)*(numbands*5))); %FWHM of d band                  
-        wd = carbon_spectra_params(2 +((i-1)*(numbands*5))); %peak position of the d band
-        ID = carbon_spectra_params(3 +((i-1)*(numbands*5))); % intensity of d band
-        fwhmg = carbon_spectra_params(9 +((i-1)*(numbands*5))); % FWHM of G band
-        wg = carbon_spectra_params(7 +((i-1)*(numbands*5))); % peak position
-        IG = carbon_spectra_params(8 +((i-1)*(numbands*5))); %intensity of gband
-        intensity = carbon_spectra(1 + ((i -1)*col):col+((i -1)*col)); 
-        [K, D_slope, G_slope,KK] = CurvatureCompute(wd,Normalize_vals(i),fwhmd,wd,fwhmg,wg,ID,IG,intensity);
-                                
-        KD(i) = K;
-        
-        [K, D_slope, G_slope, KK] = CurvatureCompute(wg,Normalize_vals(i),fwhmd,wd,fwhmg,wg,ID,IG,intensity);
-        
-        KG(i) = K;
-
-        ID_IG(i) = ID/IG;
-        g_slope(i) = D_slope;
-        d_slope(i) = G_slope;
-        kk(i) = KK;
-        
-        % counter for array placement
-        counter = counter + 1 t
-    else
-    end
-end
-
-
-carbon_spectra_params = [carbon_spectra_params;counti];
-carbon_spectra_params = [carbon_spectra_params;KD];
-carbon_spectra_params = [carbon_spectra_params;KG];
-carbon_spectra_params = [carbon_spectra_params;ID_IG];
-carbon_spectra_params = [carbon_spectra_params;d_slope];
-carbon_spectra_params = [carbon_spectra_params;g_slope];
-
-carbon_spectra_params = fnorm_reconstructor(carbon_spectra_params)
 
 %writes spectral parameters to a .csv file of name you choose.
 csvwrite('ALH770121_95_SG_params.csv',carbon_spectra_params)
