@@ -15,11 +15,11 @@ import pandas as pd
 
 
     
-def Param_Read(name,num_)peaks=2):
+def Param_Read(name,num_peaks=2):
     """opens .csv file of spectral parameters and unpacks data"""
     count = 0
     dictionary = {}
-    dictionary_2 = {}
+    p_dic = {}
     with open(name, newline='') as csvfile:
         reader = csv.reader(csvfile,delimiter=',')
         for row in reader:
@@ -27,23 +27,31 @@ def Param_Read(name,num_)peaks=2):
             count += 1
 
     nums = []
+    names = []
     for i in range(num_peaks):
       nums.append(int(0 + (5 * i)))
+      names.append('peak_number_' + str(i))
       nums.append(int(1 + (5 * i)))
+      names.append('peak_position_' + str(i))
       nums.append(int(2 + (5 * i)))
+      names.append('peak_intensity_' + str(i))
       nums.append(int(3 + (5 * i)))
+      names.append('peak_fwhm_' + str(i))
       nums.append(int(4 + (5 * i)))
-    
+      names.append('peak_area_' + str(i))
+      
     nums.append(5 * num_peaks)
-    for num in nums:
+    names.append('index')
+    for i in range(len(nums)):
+        
         element_list = []
-        for element in dictionary[num]:
+        for element in dictionary[str(nums[i])]:
             element_list.append(float(element))
-            dictionary_2[num] = element_list
+            p_dic[names[i]] = element_list
 
     
-   
-    return x1,w1,x2,w2,index
+  
+    return p_dic
 
 def value_correction(params,choice=1,upperbound='none',lowerbound='none'):
     """takes unpacked params, screens for bad data points and separates data
