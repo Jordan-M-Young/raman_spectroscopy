@@ -7,6 +7,8 @@ Raman Hyperspectral maps are images where each pixel has an associated spectrum.
 intensity of the spectrum at a given wavenumber. This code was originally used to process Raman image data for organic materials
 found in various types of meteorites, but can be used with any material of interest. 
 
+To use the processing pipeline, you'll need to download all the code shown in this repository as well as peakfit.m from https://terpconnect.umd.edu/~toh/spectrum/peakfit.m. This is not my own code, but that of Thomas C. O'Haver at the University of Maryland. Lots of thanks to Dr. O'Haver for his code!
+
 You'll find the various scripts used to process the collected images in this repository as well as example files necessary to run the processing work on. Please reach out to me or contribute if you have suggestions.
 
 Right now the scripts used to analyze output Raman data are cross language (I.e. some in python some in Matlab). I realize that people may 
