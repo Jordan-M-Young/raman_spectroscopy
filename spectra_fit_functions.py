@@ -46,6 +46,7 @@ def Param_Read(file_name,num_peaks=2):
     dictionary = {}
     params = {}
     
+    
     with open(file_name, newline='') as csvfile:
         reader = csv.reader(csvfile,delimiter=',')
         for row in reader:
@@ -73,11 +74,11 @@ def Param_Read(file_name,num_peaks=2):
    
 def avg_params(params):
     """computes the average value for each spectral parameter"""
-    spec_params = {}
+    avg_spec_params = {}
     for key, value in params.items()
-        spec_params[key] = np.mean(np.array(value))
+        avg_spec_params[key] = np.mean(np.array(value))
    
-    return spec_params
+    return avg_spec_params
                       
      
 
