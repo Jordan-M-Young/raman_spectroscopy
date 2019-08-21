@@ -76,7 +76,7 @@ def avg_params(params):
     """computes the average value for each spectral parameter"""
     avg_spec_params = {}
     for key, value in params.items()
-        avg_spec_params[key] = np.mean(np.array(value))
+        avg_spec_params['Average_' + key] = np.mean(np.array(value))
    
     return avg_spec_params
                       
