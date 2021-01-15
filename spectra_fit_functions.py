@@ -9,8 +9,6 @@ import csv
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.cluster import KMeans
-from sklearn.cluster import MiniBatchKMeans
 import pandas as pd
 
 def num_name_gen(num_peaks):
